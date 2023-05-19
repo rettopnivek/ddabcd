@@ -1,0 +1,15 @@
+citHeader("To cite ddabcd in publications use:")
+
+citEntry(
+  entry    = "Misc",
+  title    = "ddabcd: Delay Discounting Models for the ABCD study",
+  author   = "Kevin Potter",
+  year     = "2023",
+  version = "1.0.0",
+  url      = "https://rettopnivek.github.io/ddabcd/",
+  textVersion = paste(
+    "Potter, K. (2023). ddabcd: Delay discounting models for",
+    "the ABCD study (Version 1.0.0) [Computer software].",
+    "https://rettopnivek.github.io/ddabcd/"
+  )
+)

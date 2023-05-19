@@ -1,0 +1,21 @@
+Package: ddabcd
+Title: Delay Discounting Models for the ABCD study
+Version: 1.0.0
+Authors@R: 
+    person( "Kevin", "Potter", , "kevin.w.potter@gmail.com", 
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0002-3845-0512" ) )
+Description: Assorted functions for processing and modeling the 
+  delay discounting data collected as part of the ABCD study.
+License: MIT + License
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Depends: 
+    R (>= 4.0),
+    bbmle (>= 1.0.25),
+    tidyr (>= 1.2.0)
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
