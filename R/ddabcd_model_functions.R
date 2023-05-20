@@ -2653,13 +2653,23 @@ ddabcd_post_fit_report <- function(
 
     message(
       paste0(
-        'Model = ', chr_models[m], '; Fit succeeded = ',
+        'Model: ', chr_models[m]
+        )
+      )
+    message(
+      paste0(
+        '  Successful estimation: ',
+        int_successful_fits[m], '/', int_total, ' (',
         format(
           round( 100*int_successful_fits[m]/int_total, 1 ),
           nsmall = 1
         ),
-        '% (', int_successful_fits, '/', int_total, ')',
-        '; RMSE Mean = ',
+        '%)'
+      )
+    )
+    message(
+      paste0(
+        '  RMSE: Mean = ',
         format( round( num_rmse_mean[m], 2 ), nsmall = 2 ),
         ', 95% UI = ',
         format( round( num_rmse_ui_lb[m], 2 ), nsmall = 2 ),
@@ -2667,6 +2677,7 @@ ddabcd_post_fit_report <- function(
         format( round( num_rmse_ui_ub[m], 2 ), nsmall = 2 )
       )
     )
+    message('')
 
   }
 

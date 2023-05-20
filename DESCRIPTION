@@ -1,6 +1,6 @@
 Package: ddabcd
 Title: Delay Discounting Models for the ABCD study
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: 
     person( "Kevin", "Potter", , "kevin.w.potter@gmail.com", 
     role = c("aut", "cre"),
