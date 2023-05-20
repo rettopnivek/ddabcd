@@ -3,7 +3,7 @@
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2023-05-19
+# Last updated 2023-05-20
 
 # Table of contents
 # 1) Setup
@@ -384,7 +384,27 @@ test_that("models fit successfully using mle2 (Normal)", {
   )
 })
 
-test_that("models is robust to failed estimation", {
+test_that("models fit successfully using mle2 (Beta)", {
+  expect_equal(
+    ddabcd_fit_models_using_mle2(
+      dtf_delay[1:7, ],
+      chr_distribution = 'Beta'
+    ) |> sapply( ddabcd_estimation_succeeded ) |> all(),
+    TRUE
+  )
+})
+
+test_that("models fit successfully using mle2 (Logit-normal)", {
+  expect_equal(
+    ddabcd_fit_models_using_mle2(
+      dtf_delay[1:7, ],
+      chr_distribution = 'Logit-normal'
+    ) |> sapply( ddabcd_estimation_succeeded ) |> all(),
+    TRUE
+  )
+})
+
+test_that("function is robust to failed estimation", {
   expect_equal(
     ddabcd_fit_models_using_mle2(
       (dtf_delay %index% 48) %index% list(1, 'eventname'),
@@ -394,4 +414,24 @@ test_that("models is robust to failed estimation", {
   )
 })
 
+#### 2.7) ddabcd_fit_models_using_tl_mle2 ####
+
+test_that("models fit successfully using tl-mle2", {
+  expect_equal(
+    ddabcd_fit_models_using_tl_mle2(
+      dtf_delay[1:7, ],
+    ) |> sapply( ddabcd_estimation_succeeded ) |> all(),
+    TRUE
+  )
+})
+
+test_that("function is robust to failed estimation", {
+  expect_equal(
+    ddabcd_fit_models_using_tl_mle2(
+      (dtf_delay %index% 48) %index% list(1, 'eventname'),
+      control = list( maxit = 2e4 )
+    ) |> sapply( ddabcd_estimation_succeeded ),
+    c( Null = FALSE, M1987 = FALSE, R2006 = FALSE )
+  )
+})
 

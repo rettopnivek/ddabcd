@@ -46,6 +46,7 @@
 #     5.3.2) ddabcd_post_fit_attr
 #     5.3.3) ddabcd_post_fit_if_success
 #     5.3.4) ddabcd_post_fit_add_to_data
+#     5.3.5) ddabcd_post_fit_convergence
 
 #### 1) Probability distribution functions ####
 
@@ -1331,7 +1332,7 @@ ddabcd_fit_models_using_nls <- function(
   lst_fits.nls <- list(
     Null = 'Estimation failed',
     M1987 = 'Estimation failed',
-    R2006 = 'Estimation failed'
+    R2006 = 'Estimation failed\nNo variation in data'
   )
 
   lst_fits.nls$Null <- tryCatch(
@@ -1342,7 +1343,10 @@ ddabcd_fit_models_using_nls <- function(
         control = lst_control,
         ...
       ),
-      error = function(e) return('Estimation failed')
+      error = function(e) return(
+        paste0( 'Estimation failed', '\n',
+                paste( as.character(e), collapse = '\n' ), '\n' )
+      )
     )
   lst_fits.nls$M1987 = tryCatch(
       stats::nls(
@@ -1352,12 +1356,17 @@ ddabcd_fit_models_using_nls <- function(
         control = lst_control,
         ...
       ),
-      error = function(e) return('Estimation failed')
+      error = function(e) return(
+        paste0( 'Estimation failed', '\n',
+                paste( as.character(e), collapse = '\n' ), '\n' )
+      )
     )
 
   # Check for no variation in data
   lgc_no_variation <-
-    all( dtf_data[[ chr_outcome ]] == dtf_data[[ chr_outcome ]][1] )
+    all( dtf_data[[ chr_outcome ]] == dtf_data[[ chr_outcome ]][1] &
+           !is.na( dtf_data[[ chr_outcome ]] ) ) |
+    any( is.na( dtf_data[[ chr_outcome ]] ) )
 
 
   # If model of Rachlin (2006) can be fit
@@ -1371,7 +1380,10 @@ ddabcd_fit_models_using_nls <- function(
         control = lst_control,
         ...
       ),
-      error = function(e) return('Estimation failed')
+      error = function(e) return(
+        paste0( 'Estimation failed', '\n',
+                paste( as.character(e), collapse = '\n' ), '\n' )
+      )
     )
 
     # Close 'If model of Rachlin (2006) can be fit'
@@ -1623,7 +1635,7 @@ ddabcd_fit_models_using_mle2 <- function(
   lst_fits.mle2 <- list(
     Null = 'Estimation failed',
     M1987 = 'Estimation failed',
-    R2006 = 'Estimation failed'
+    R2006 = 'Estimation failed\nNo variation in data'
   )
 
   fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_likelihoods
@@ -1643,7 +1655,10 @@ ddabcd_fit_models_using_mle2 <- function(
       vecpar = TRUE,
       ...
     ),
-    error = function(e) return('Estimation failed')
+    error = function(e) return(
+      paste0( 'Estimation failed', '\n',
+              paste( as.character(e), collapse = '\n' ), '\n' )
+    )
   )
 
   fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_likelihoods
@@ -1663,12 +1678,17 @@ ddabcd_fit_models_using_mle2 <- function(
       vecpar = TRUE,
       ...
     ),
-    error = function(e) return('Estimation failed')
+    error = function(e) return(
+      paste0( 'Estimation failed', '\n',
+              paste( as.character(e), collapse = '\n' ), '\n' )
+    )
   )
 
   # Check for no variation in data
   lgc_no_variation <-
-    all( dtf_data[[ chr_outcome ]] == dtf_data[[ chr_outcome ]][1] )
+    all( dtf_data[[ chr_outcome ]] == dtf_data[[ chr_outcome ]][1] &
+           !is.na( dtf_data[[ chr_outcome ]] ) ) |
+    any( is.na( dtf_data[[ chr_outcome ]] ) )
 
   # If model of Rachlin (2006) can be fit
   if ( !lgc_no_variation ) {
@@ -1690,7 +1710,10 @@ ddabcd_fit_models_using_mle2 <- function(
         ),
         vecpar = TRUE
       ),
-      error = function(e) return('Estimation failed')
+      error = function(e) return(
+        paste0( 'Estimation failed', '\n',
+                paste( as.character(e), collapse = '\n' ), '\n' )
+      )
     )
 
     # Close 'If model of Rachlin (2006) can be fit'
@@ -1931,7 +1954,7 @@ ddabcd_fit_models_using_tl_mle2 <- function(
   lst_fits.mle2 <- list(
     Null = 'Estimation failed',
     M1987 = 'Estimation failed',
-    R2006 = 'Estimation failed'
+    R2006 = 'Estimation failed\nNo variation in data'
   )
 
   fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_tobit_likelihoods
@@ -1951,7 +1974,10 @@ ddabcd_fit_models_using_tl_mle2 <- function(
       vecpar = TRUE,
       ...
     ),
-    error = function(e) return('Estimation failed')
+    error = function(e) return(
+      paste0( 'Estimation failed', '\n',
+              paste( as.character(e), collapse = '\n' ), '\n' )
+    )
   )
 
   fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_tobit_likelihoods
@@ -1971,12 +1997,17 @@ ddabcd_fit_models_using_tl_mle2 <- function(
       vecpar = TRUE,
       ...
     ),
-    error = function(e) return('Estimation failed')
+    error = function(e) return(
+      paste0( 'Estimation failed', '\n',
+              paste( as.character(e), collapse = '\n' ), '\n' )
+    )
   )
 
   # Check for no variation in data
   lgc_no_variation <-
-    all( dtf_data[[ chr_outcome ]] == dtf_data[[ chr_outcome ]][1] )
+    all( dtf_data[[ chr_outcome ]] == dtf_data[[ chr_outcome ]][1] &
+           !is.na( dtf_data[[ chr_outcome ]] ) ) |
+    any( is.na( dtf_data[[ chr_outcome ]] ) )
 
 
   # If model of Rachlin (2006) can be fit
@@ -2636,7 +2667,7 @@ ddabcd_post_fit_report <- function(
           )
         },
         chr_model = m
-      ) |> sd()
+      ) |> sd( na.rm = TRUE )
     }
   )
 
@@ -2862,7 +2893,7 @@ ddabcd_post_fit_bootstrapped_prediction_intervals_mle2 <- function(
   return( mat_predicted )
 }
 
-#### 5.3) Tools for extracting/incorporating results
+#### 5.3) Tools for extracting/incorporating results ####
 
 #### 5.3.1) ddabcd_post_fit_extract ####
 #' Extract Elements From List of Model Fits
@@ -3201,4 +3232,72 @@ ddabcd_post_fit_add_to_data <- function(
   }
 
   return( dtf_data )
+}
+
+#### 5.3.5) ddabcd_post_fit_convergence ####
+#' Check if Models Converged
+#'
+#' Function to iterate over model fits across
+#' participants and check for model convergence.
+#'
+#' @param lst_all_fits A list of lists with model fits.
+#' @param chr_model A character string, the specific
+#'   model from which elements should be extracted.
+#'   Options include \code{'Null'}, \code{'M1987'},
+#'   or \code{'R2006'}.
+#'
+#' @returns A logical vector equal to \code{TRUE}
+#' if models converged, and \code{FALSE} otherwise.
+#'
+#' @export
+
+ddabcd_post_fit_convergence <- function(
+    lst_all_fits,
+    chr_model = 'M1987' ) {
+
+  lgc_converged <- sapply(
+    seq_along( lst_all_fits ), function(i) {
+
+      # Check if any estimation results
+      lgc_fit <- ddabcd::ddabcd_estimation_succeeded(
+        lst_all_fits[[i]][[chr_model]]
+      )
+
+      # Any estimation results
+      if ( lgc_fit ) {
+
+        # If fit using nls
+        if ( class( lst_all_fits[[i]][[chr_model]] ) == 'nls' ) {
+
+          return(
+            lst_all_fits[[i]][[chr_model]]$convInfo$stopCode %in% 0
+          )
+
+          # Close 'If fit using nls'
+        }
+
+        # If fit using mle2
+        if ( class( lst_all_fits[[i]][[chr_model]] ) == 'mle2' ) {
+
+          return(
+            lst_all_fits[[i]][[chr_model]]@details$convergence %in% 0
+          )
+
+          # Close 'If fit using mle2'
+        }
+
+        return( NA )
+
+        # Close 'Any estimation results'
+      } else {
+
+        return( FALSE )
+
+        # Close else for 'Any estimation results'
+      }
+
+    }
+  )
+
+  return( lgc_converged )
 }
