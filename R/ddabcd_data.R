@@ -594,7 +594,9 @@ ddabcd_data_prep <- function(
 #' ddabcd_data_censor( dtf_data )
 #'
 #' # Vector of values
-#' ddabcd_data_censor( c(-5, 0, 5), chr_outcome = '', num_scaling = 1)
+#' ddabcd_data_censor(
+#'   c(-5, 0, 5) %transform% 'logistic', chr_outcome = ''
+#' )
 #'
 #' @export
 
@@ -605,9 +607,6 @@ ddabcd_data_censor <- function(
     num_limits = c(0.78125, 99.21875),
     num_scaling = 100) {
 
-  # Initialize output
-  num_output <- rep( NA, nrow(dtf_data) )
-
   # If no column name provided
   if ( chr_outcome == '' ) {
 
@@ -616,10 +615,13 @@ ddabcd_data_censor <- function(
     # Close 'If no column name provided'
   } else {
 
-    num_values <- dtf_data[[ chr_outcome ]]
+    num_values <- obj_data[[ chr_outcome ]]
 
     # Close else for 'If no column name provided'
   }
+
+  # Initialize output
+  num_output <- rep( NA, length( obj_data ) )
 
   lgc_under <-
     !is.na( num_values ) &

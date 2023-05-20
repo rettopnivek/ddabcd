@@ -60,6 +60,8 @@ ddabcd_data_censor( dtf_data, lgc_indicator = TRUE )
 ddabcd_data_censor( dtf_data )
 
 # Vector of values
-ddabcd_data_censor( c(-5, 0, 5), chr_outcome = '', num_scaling = 1)
+ddabcd_data_censor(
+  c(-5, 0, 5) \%transform\% 'logistic', chr_outcome = ''
+)
 
 }
