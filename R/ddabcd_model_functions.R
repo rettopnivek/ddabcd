@@ -3,7 +3,7 @@
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2023-05-19
+# Last updated 2023-05-20
 
 # Table of contents
 # 1) Probability distribution functions
@@ -25,6 +25,7 @@
 #   3.2) ddabcd_estimation_priors
 #   3.3) ddabcd_estimation_sum_of_log_likelihoods
 #   3.4) ddabcd_estimation_sum_of_log_tobit_likelihoods
+#   3.5) ddabcd_estimation_succeeded
 # 4) Model fit functions
 #   4.1) ddabcd_fit_models_using_nls
 #   4.2) ddabcd_fit_models_using_mle2
@@ -43,7 +44,7 @@
 #   5.3) Tools for extracting/incorporating results
 #     5.3.1) ddabcd_post_fit_extract
 #     5.3.2) ddabcd_post_fit_attr
-#     5.3.3) ddabcd_post_fit_ifelse_null
+#     5.3.3) ddabcd_post_fit_if_success
 #     5.3.4) ddabcd_post_fit_add_to_data
 
 #### 1) Probability distribution functions ####
@@ -1144,6 +1145,33 @@ ddabcd_estimation_sum_of_log_tobit_likelihoods <- function(
   return( num_output )
 }
 
+#### 3.5) ddabcd_estimation_succeeded ####
+#' Check if Model Estimation Succeeded
+#'
+#' Convenience function that checks the
+#' class of a model fit object. Fail-states
+#' for model fit result in a simple
+#' character string reporting failure rather
+#' than the complex class with results,
+#' allowing confirmation of success if an
+#' object is not a character string.
+#'
+#' @param obj_fit An R object, model fit output.
+#'
+#' @returns A logical value, \code{TRUE} if
+#' \code{obj_fit} is not a character string
+#' (indicating successful fit) or \code{FALSE}
+#' otherwise.
+#'
+#' @export
+
+ddabcd_estimation_succeeded <- function(
+    obj_fit ) {
+
+  return( !class( obj_fit ) %in% 'character' )
+
+}
+
 #### 4) Model fit functions ####
 
 #### 4.1) ddabcd_fit_models_using_nls ####
@@ -1299,8 +1327,14 @@ ddabcd_fit_models_using_nls <- function(
     # Close 'Check parameter names [R2006]'
   }
 
+  # Initialize list for model fits
   lst_fits.nls <- list(
-    Null = tryCatch(
+    Null = 'Estimation failed',
+    M1987 = 'Estimation failed',
+    R2006 = 'Estimation failed'
+  )
+
+  lst_fits.nls$Null <- tryCatch(
       stats::nls(
         as.formula( chr_formula.Null ),
         start = lst_start$Null,
@@ -1308,9 +1342,9 @@ ddabcd_fit_models_using_nls <- function(
         control = lst_control,
         ...
       ),
-      error = function(e) return(NULL)
-    ),
-    M1987 = tryCatch(
+      error = function(e) return('Estimation failed')
+    )
+  lst_fits.nls$M1987 = tryCatch(
       stats::nls(
         as.formula( chr_formula.M1987 ),
         start = lst_start$M1987,
@@ -1318,9 +1352,18 @@ ddabcd_fit_models_using_nls <- function(
         control = lst_control,
         ...
       ),
-      error = function(e) return(NULL)
-    ),
-    R2006 = tryCatch(
+      error = function(e) return('Estimation failed')
+    )
+
+  # Check for no variation in data
+  lgc_no_variation <-
+    all( dtf_data[[ chr_outcome ]] == dtf_data[[ chr_outcome ]][1] )
+
+
+  # If model of Rachlin (2006) can be fit
+  if ( !lgc_no_variation ) {
+
+    lst_fits.nls$R2006 = tryCatch(
       stats::nls(
         as.formula( chr_formula.R2006 ),
         start = lst_start$R2006,
@@ -1328,16 +1371,18 @@ ddabcd_fit_models_using_nls <- function(
         control = lst_control,
         ...
       ),
-      error = function(e) return(NULL)
+      error = function(e) return('Estimation failed')
     )
-  )
+
+    # Close 'If model of Rachlin (2006) can be fit'
+  }
 
   # Check for failed estimations
   if (lgc_warnings) {
 
     lgc_failed <- sapply(
       c( 'Null', 'M1987', 'R2006'), function(m) {
-        is.null( lst_fits.nls[[m]] )
+        !ddabcd_estimation_succeeded( lst_fits.nls[[m]] )
       }
     )
 
@@ -1356,23 +1401,11 @@ ddabcd_fit_models_using_nls <- function(
     # Close 'Check for failed estimations'
   }
 
-  if ( !'Null' %in% names(lst_fits.nls) ) {
-    lst_fits.mle2$Null <- NULL
-  }
-
-  if ( !'M1987' %in% names(lst_fits.nls) ) {
-    lst_fits.mle2$Null <- NULL
-  }
-
-  if ( !'R2006' %in% names(lst_fits.nls) ) {
-    lst_fits.mle2$R2006 <- NULL
-  }
-
   # Loop over models
   for ( m in 1:3 ) {
 
     # If model fit successfully
-    if ( !is.null( lst_fits.nls[[m]] ) ) {
+    if ( ddabcd_estimation_succeeded( lst_fits.nls[[m]] ) ) {
 
       lst_attr <-
         attributes( lst_fits.nls[[m]] )
@@ -1588,9 +1621,9 @@ ddabcd_fit_models_using_mle2 <- function(
   }
 
   lst_fits.mle2 <- list(
-    Null = NULL,
-    M1987 = NULL,
-    R2006 = NULL
+    Null = 'Estimation failed',
+    M1987 = 'Estimation failed',
+    R2006 = 'Estimation failed'
   )
 
   fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_likelihoods
@@ -1610,7 +1643,7 @@ ddabcd_fit_models_using_mle2 <- function(
       vecpar = TRUE,
       ...
     ),
-    error = function(e) return(NULL)
+    error = function(e) return('Estimation failed')
   )
 
   fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_likelihoods
@@ -1630,35 +1663,45 @@ ddabcd_fit_models_using_mle2 <- function(
       vecpar = TRUE,
       ...
     ),
-    error = function(e) return(NULL)
+    error = function(e) return('Estimation failed')
   )
 
-  fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_likelihoods
-  bbmle::parnames( fun_nsll ) <- c( 'lnk', 's', 'lnd' )
+  # Check for no variation in data
+  lgc_no_variation <-
+    all( dtf_data[[ chr_outcome ]] == dtf_data[[ chr_outcome ]][1] )
 
-  lst_fits.mle2$R2006 <- tryCatch(
-    bbmle::mle2(
-      fun_nsll,
-      start = lst_start$R2006,
-      data = list(
-        dtf_data = dtf_data,
-        chr_distribution = chr_distribution,
-        chr_measures = chr_measures,
-        lst_priors = lst_priors$R2006,
-        fun_priors = fun_priors,
-        ...
+  # If model of Rachlin (2006) can be fit
+  if ( !lgc_no_variation ) {
+
+    fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_likelihoods
+    bbmle::parnames( fun_nsll ) <- c( 'lnk', 's', 'lnd' )
+
+    lst_fits.mle2$R2006 <- tryCatch(
+      bbmle::mle2(
+        fun_nsll,
+        start = lst_start$R2006,
+        data = list(
+          dtf_data = dtf_data,
+          chr_distribution = chr_distribution,
+          chr_measures = chr_measures,
+          lst_priors = lst_priors$R2006,
+          fun_priors = fun_priors,
+          ...
+        ),
+        vecpar = TRUE
       ),
-      vecpar = TRUE
-    ),
-    error = function(e) return(NULL)
-  )
+      error = function(e) return('Estimation failed')
+    )
+
+    # Close 'If model of Rachlin (2006) can be fit'
+  }
 
   # Check for failed estimations
   if (lgc_warnings) {
 
     lgc_failed <- sapply(
       c( 'Null', 'M1987', 'R2006'), function(m) {
-        is.null( lst_fits.mle2[[m]] )
+        !ddabcd_estimation_succeeded( lst_fits.mle2[[m]] )
       }
     )
 
@@ -1677,26 +1720,13 @@ ddabcd_fit_models_using_mle2 <- function(
     # Close 'Check for failed estimations'
   }
 
-  if ( !'Null' %in% names(lst_fits.mle2) ) {
-    lst_fits.mle2$Null <- NULL
-  }
-
-  if ( !'M1987' %in% names(lst_fits.mle2) ) {
-    lst_fits.mle2$Null <- NULL
-  }
-
-  if ( !'R2006' %in% names(lst_fits.mle2) ) {
-    lst_fits.mle2$R2006 <- NULL
-  }
-
   # Loop over models
   for ( m in 1:3 ) {
 
     # If model fit successfully
-    if ( !is.null( lst_fits.mle2[[m]] ) ) {
+    if ( ddabcd_estimation_succeeded( lst_fits.mle2[[m]] ) ) {
 
       num_param <- coef( lst_fits.mle2[[m]] )
-
 
       num_predicted <- ddabcd::ddabcd_model_predictions(
         num_param[ names(num_param) != 'lnd' ],
@@ -1899,9 +1929,9 @@ ddabcd_fit_models_using_tl_mle2 <- function(
   }
 
   lst_fits.mle2 <- list(
-    Null = NULL,
-    M1987 = NULL,
-    R2006 = NULL
+    Null = 'Estimation failed',
+    M1987 = 'Estimation failed',
+    R2006 = 'Estimation failed'
   )
 
   fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_tobit_likelihoods
@@ -1921,7 +1951,7 @@ ddabcd_fit_models_using_tl_mle2 <- function(
       vecpar = TRUE,
       ...
     ),
-    error = function(e) return(NULL)
+    error = function(e) return('Estimation failed')
   )
 
   fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_tobit_likelihoods
@@ -1941,39 +1971,38 @@ ddabcd_fit_models_using_tl_mle2 <- function(
       vecpar = TRUE,
       ...
     ),
-    error = function(e) return(NULL)
+    error = function(e) return('Estimation failed')
   )
 
-  fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_tobit_likelihoods
-  bbmle::parnames( fun_nsll ) <- c( 'nlnk', 's', 'lnd' )
+  # Check for no variation in data
+  lgc_no_variation <-
+    all( dtf_data[[ chr_outcome ]] == dtf_data[[ chr_outcome ]][1] )
 
-  lst_fits.mle2$R2006 <- tryCatch(
-    bbmle::mle2(
-      fun_nsll,
-      start = lst_start$R2006,
-      data = list(
-        dtf_data = dtf_data[, chr_measures],
-        chr_measures = chr_measures,
-        num_limits = num_limits,
-        lst_priors = lst_priors$R2006,
-        fun_priors = fun_priors,
-        ...
+
+  # If model of Rachlin (2006) can be fit
+  if ( !lgc_no_variation ) {
+
+    fun_nsll <- ddabcd::ddabcd_estimation_sum_of_log_tobit_likelihoods
+    bbmle::parnames( fun_nsll ) <- c( 'nlnk', 's', 'lnd' )
+
+    lst_fits.mle2$R2006 <- tryCatch(
+      bbmle::mle2(
+        fun_nsll,
+        start = lst_start$R2006,
+        data = list(
+          dtf_data = dtf_data[, chr_measures],
+          chr_measures = chr_measures,
+          num_limits = num_limits,
+          lst_priors = lst_priors$R2006,
+          fun_priors = fun_priors,
+          ...
+        ),
+        vecpar = TRUE
       ),
-      vecpar = TRUE
-    ),
-    error = function(e) return(NULL)
-  )
+      error = function(e) return('Estimation failed')
+    )
 
-  if ( !'Null' %in% names(lst_fits.mle2) ) {
-    lst_fits.mle2$Null <- NULL
-  }
-
-  if ( !'M1987' %in% names(lst_fits.mle2) ) {
-    lst_fits.mle2$Null <- NULL
-  }
-
-  if ( !'R2006' %in% names(lst_fits.mle2) ) {
-    lst_fits.mle2$R2006 <- NULL
+    # Close 'If model of Rachlin (2006) can be fit'
   }
 
   # Check for failed estimations
@@ -1981,7 +2010,7 @@ ddabcd_fit_models_using_tl_mle2 <- function(
 
     lgc_failed <- sapply(
       c( 'Null', 'M1987', 'R2006'), function(m) {
-        is.null( lst_fits.mle2[[m]] )
+        ddabcd::ddabcd_estimation_succeeded( lst_fits.mle2[[m]] )
       }
     )
 
@@ -2004,10 +2033,9 @@ ddabcd_fit_models_using_tl_mle2 <- function(
   for ( m in 1:3 ) {
 
     # If model fit successfully
-    if ( !is.null( lst_fits.mle2[[m]] ) ) {
+    if ( ddabcd_estimation_succeeded( lst_fits.mle2[[m]] ) ) {
 
       num_param <- coef( lst_fits.mle2[[m]] )
-
 
       num_predicted <- ddabcd::ddabcd_model_predictions(
         num_param[ names(num_param) != 'lnd' ],
@@ -2170,7 +2198,7 @@ ddabcd_fit_models_across_participants <- function(
 #' parameters from an R object compatible with the
 #' \code{coef} method.
 #'
-#' @param lst_fit An R object with a \code{coef} method.
+#' @param obj_fit An R object with a \code{coef} method.
 #' @param obj_param Either an integer or character
 #'   vector specifying the subset of the \code{coef}
 #'   output to keep.
@@ -2189,16 +2217,16 @@ ddabcd_fit_models_across_participants <- function(
 #' @export
 
 `%pull_coef%` <- function(
-    lst_fit,
+    obj_fit,
     obj_param ) {
 
-  if ( !is.null(lst_fit) ) {
+  if ( ddabcd::ddabcd_estimation_succeeded(obj_fit) ) {
 
-    return( coef( lst_fit )[obj_param] )
+    return( coef( obj_fit )[obj_param] )
 
   } else {
 
-    return( NA )
+    return( rep( NA, length(obj_param) ) )
 
   }
 
@@ -2541,11 +2569,10 @@ ddabcd_post_fit_compute_rmse <- function(
 #### 5.2.2) ddabcd_post_fit_report ####
 #' Brief Report on Delay Discounting Model Fit
 #'
-#' Function that provides a summary of (a) the
-#' number of participants for which models
-#' where successfully fit, and (b) means and
-#' inter-quartile limits for the root-mean-square-error
-#' (RMSE).
+#' Function that provides a summary of (a) the number of
+#' participants for which models where successfully fit,
+#' and (b) means and uncertainty intervals for the
+#' root-mean-square-error (RMSE).
 #'
 #' @param lst_all_fits A list of lists with model fits
 #' (see [ddabcd::dabcd_fit_models_across_participants]).
@@ -2575,7 +2602,7 @@ ddabcd_post_fit_report <- function(
     c( 'Null', 'M1987', 'R2006' ), function(m) {
       ddabcd::ddabcd_post_fit_extract(
         lst_all_fits,
-        fun_extract = function(l) !is.null(l),
+        fun_extract = function(l) ddabcd::ddabcd_estimation_succeeded(l),
         chr_model = m
       ) |> sum()
     }
@@ -2586,7 +2613,7 @@ ddabcd_post_fit_report <- function(
       ddabcd::ddabcd_post_fit_extract(
         lst_all_fits,
         fun_extract = function(l) {
-          ddabcd::ddabcd_post_fit_ifelse_null(
+          ddabcd::ddabcd_post_fit_if_success(
             l,
             fun_call = ddabcd::ddabcd_post_fit_attr,
             chr_attr = 'rmse'
@@ -2602,7 +2629,7 @@ ddabcd_post_fit_report <- function(
       ddabcd::ddabcd_post_fit_extract(
         lst_all_fits,
         fun_extract = function(l) {
-          ddabcd::ddabcd_post_fit_ifelse_null(
+          ddabcd::ddabcd_post_fit_if_success(
             l,
             fun_call = ddabcd::ddabcd_post_fit_attr,
             chr_attr = 'rmse'
@@ -2626,12 +2653,13 @@ ddabcd_post_fit_report <- function(
 
     message(
       paste0(
-        'Model = ', chr_models[m], '; % fit = ',
+        'Model = ', chr_models[m], '; Fit succeeded = ',
         format(
           round( 100*int_successful_fits[m]/int_total, 1 ),
           nsmall = 1
         ),
-        '%; RMSE Mean = ',
+        '% (', int_successful_fits, '/', int_total, ')',
+        '; RMSE Mean = ',
         format( round( num_rmse_mean[m], 2 ), nsmall = 2 ),
         ', 95% UI = ',
         format( round( num_rmse_ui_lb[m], 2 ), nsmall = 2 ),
@@ -2651,7 +2679,7 @@ ddabcd_post_fit_report <- function(
 #' assuming parameter estimates follow a multivariate
 #' normal distribution.
 #'
-#' @param lst_fit A model fit object that has methods
+#' @param obj_fit A model fit object that has methods
 #'   for \code{coef} and \code{vcov}.
 #' @param int_samples The numer of samples to draw
 #'   from the multivariate normal distribution.
@@ -2680,16 +2708,16 @@ ddabcd_post_fit_report <- function(
 #' @export
 
 ddabcd_post_fit_sample_parameters <- function(
-    lst_fit,
+    obj_fit,
     int_samples = 1000,
     lgc_suppress_error = FALSE,
     chr_labels = c( 'a0', 'lnk', 's', 'lnd' ) ) {
 
   # If successful fit
-  if ( !is.null( lst_fit ) ) {
+  if ( ddabcd_post_fit_if_success( obj_fit ) ) {
 
-    num_coef <- coef( lst_fit )
-    mat_VC <- vcov( lst_fit )
+    num_coef <- coef( obj_fit )
+    mat_VC <- vcov( obj_fit )
 
     mat_samples <- MASS::mvrnorm(
       n = int_samples,
@@ -2731,7 +2759,7 @@ ddabcd_post_fit_sample_parameters <- function(
 #' distribution, and 2) possible observed data values for
 #' delay discounting model at each set of parameter values.
 #'
-#' @param lst_fit A model fit object that has methods
+#' @param obj_fit A model fit object that has methods
 #'   for \code{coef} and \code{vcov}.
 #' @param int_samples The numer of samples to draw
 #'   from the multivariate normal distribution.
@@ -2766,7 +2794,7 @@ ddabcd_post_fit_sample_parameters <- function(
 #' @export
 
 ddabcd_post_fit_bootstrapped_prediction_intervals_mle2 <- function(
-    lst_fit,
+    obj_fit,
     int_samples = 1000,
     lgc_suppress_error = FALSE,
     chr_labels = c( 'a0', 'lnk', 's', 'lnd' ),
@@ -2775,14 +2803,14 @@ ddabcd_post_fit_bootstrapped_prediction_intervals_mle2 <- function(
     ... ) {
 
   mat_param_samples <- ddabcd::ddabcd_post_fit_sample_parameters(
-    lst_fit,
+    obj_fit,
     int_samples = int_samples,
     lgc_suppress_error = lgc_suppress_error
   )
 
-  chr_distribution <- attributes( lst_fit )$data$chr_distribution
-  num_delay <- attributes( lst_fit )$data$dtf_data[[
-    attributes( lst_fit )$data$chr_measures[2]
+  chr_distribution <- attributes( obj_fit )$data$chr_distribution
+  num_delay <- attributes( obj_fit )$data$dtf_data[[
+    attributes( obj_fit )$data$chr_measures[2]
   ]]
 
   mat_simulated <- apply(
@@ -2861,9 +2889,9 @@ ddabcd_post_fit_extract <- function(
   if ( is.null( fun_extract ) ) {
 
     # Extract point estimate for first parameter
-    fun_extract <- function(lst_fit) {
-      if ( !is.null(lst_fit) ) {
-        return( coef(lst_fit)[1] )
+    fun_extract <- function(obj_fit) {
+      if ( ddabcd::ddabcd_post_fit_if_success(obj_fit) ) {
+        return( coef(obj_fit)[1] )
       } else {
         return(NA)
       }
@@ -2914,13 +2942,15 @@ ddabcd_post_fit_extract <- function(
 #' [ddabcd::ddabcd_fit_models_using_nls]
 #' and [ddabcd::ddabcd_fit_models_using_mle2].
 #'
-#' @param lst_fit A list with model fit results.
+#' @param obj_fit An R object for model fit results.
 #' @param chr_attr A character string, the
 #'   specific attribute to access. Options include
 #'   \code{'predicted'}, \code{'residuals'},
 #'   \code{'rmse'}, \code{'loglikelihood'},
 #'   \code{'AIC'}, \code{'BIC'}, \code{'nobs'},
 #'   or \code{'dof'}.
+#' @param obj_default Value to return if attributes
+#'   aren't found.
 #'
 #' @return A list of elements or a specific element
 #' from the \code{'ddabcd_attr'} attribute.
@@ -2942,36 +2972,53 @@ ddabcd_post_fit_extract <- function(
 #' @export
 
 ddabcd_post_fit_attr <- function(
-    lst_fit,
-    chr_attr = '' ) {
+    obj_fit,
+    chr_attr = '',
+    obj_default = NA ) {
 
-  lst_attr <- attributes( lst_fit )$ddabcd_attr
+  lst_attr <- attributes( obj_fit )$ddabcd_attr
 
-  if ( chr_attr == '' ) {
-    return( lst_attr )
+  # If attributes present
+  if ( !is.null( lst_attr ) ) {
+
+    # If specific attribute requested
+    if ( chr_attr == '' ) {
+
+      return( lst_attr )
+
+      # Close 'If specific attribute requested'
+    } else {
+
+      return( lst_attr[[ chr_attr ]] )
+
+      # Close else for 'If specific attribute requested'
+    }
+
+    # Close 'If attributes present'
   } else {
-    return( lst_attr[[ chr_attr ]] )
+
+    return( obj_default )
+
+    # Close else for 'If attributes present'
   }
 
 }
 
-#### 5.3.3) ddabcd_post_fit_ifelse_null ####
-#' Call Function for Non-Null Model Fit
+#### 5.3.3) ddabcd_post_fit_if_success ####
+#' Call Function on Successful Model Fit
 #'
-#' Utility function that applies a specified
-#' function to a list with model fit only
-#' if the list is non-null (i.e., successful
-#' estimation).
+#' Applies a specified function to a model fit
+#' object only if estimation succeeded.
 #'
-#' @param lst_fit A list with model fit results.
+#' @param obj_fit An R object with model fit results.
 #' @param fun_call A function to apply to
-#'   \code{lst_fit}.
-#' @param obj_default The output if \code{lst_fit}
-#'   is \code{NULL}.
+#'   \code{obj_fit}.
+#' @param obj_default The output if \code{obj_fit}
+#'   is a character string (i.e., estimation failed).
 #' @param ... Additional parameters to \code{fun_call}.
 #'
 #' @returns The results of \code{fun_call}, or if
-#' \code{lst_fit} is \code{NULL}, \code{obj_default}
+#' \code{obj_fit} is a character string, \code{obj_default}
 #' instead.
 #'
 #' @examples
@@ -2989,20 +3036,20 @@ ddabcd_post_fit_attr <- function(
 #' # Estimation fails for Rachlin's (2006) model for last subject
 #' # due to no variation in data to identify 2nd parameter
 #' sapply( 1:2, function(i) {
-#'   ddabcd_post_fit_ifelse_null(
+#'   ddabcd_post_fit_if_success(
 #'     lst_all_fits.nls[[i]]$R2006, return(TRUE), FALSE )
 #' } )
 #'
 #' @export
 
-ddabcd_post_fit_ifelse_null <- function(
-    lst_fit,
+ddabcd_post_fit_if_success <- function(
+    obj_fit,
     fun_call,
     obj_default = NA,
     ... ) {
 
-  if ( !is.null(lst_fit) ) {
-    return( fun_call(lst_fit, ...) )
+  if ( ddabcd_estimation_succeeded(obj_fit) ) {
+    return( fun_call(obj_fit, ...) )
   } else {
     return( obj_default )
   }

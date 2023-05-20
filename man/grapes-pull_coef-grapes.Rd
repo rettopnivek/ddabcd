@@ -4,10 +4,10 @@
 \alias{\%pull_coef\%}
 \title{Extract Coefficient Point Estimates}
 \usage{
-lst_fit \%pull_coef\% obj_param
+obj_fit \%pull_coef\% obj_param
 }
 \arguments{
-\item{lst_fit}{An R object with a \code{coef} method.}
+\item{obj_fit}{An R object with a \code{coef} method.}
 
 \item{obj_param}{Either an integer or character
 vector specifying the subset of the \code{coef}

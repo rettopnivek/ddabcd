@@ -4,10 +4,10 @@
 \alias{ddabcd_post_fit_attr}
 \title{Extract 'ddabcd_attr' Component}
 \usage{
-ddabcd_post_fit_attr(lst_fit, chr_attr = "")
+ddabcd_post_fit_attr(obj_fit, chr_attr = "", obj_default = NA)
 }
 \arguments{
-\item{lst_fit}{A list with model fit results.}
+\item{obj_fit}{An R object for model fit results.}
 
 \item{chr_attr}{A character string, the
 specific attribute to access. Options include
@@ -15,6 +15,9 @@ specific attribute to access. Options include
 \code{'rmse'}, \code{'loglikelihood'},
 \code{'AIC'}, \code{'BIC'}, \code{'nobs'},
 or \code{'dof'}.}
+
+\item{obj_default}{Value to return if attributes
+aren't found.}
 }
 \value{
 A list of elements or a specific element

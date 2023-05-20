@@ -5,7 +5,7 @@ citEntry(
   title    = "ddabcd: Delay Discounting Models for the ABCD study",
   author   = "Kevin Potter",
   year     = "2023",
-  version = "1.0.0",
+  version = "1.0.2",
   url      = "https://rettopnivek.github.io/ddabcd/",
   textVersion = paste(
     "Potter, K. (2023). ddabcd: Delay discounting models for",

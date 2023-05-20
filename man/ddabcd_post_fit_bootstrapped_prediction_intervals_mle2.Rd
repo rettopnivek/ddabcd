@@ -5,7 +5,7 @@
 \title{Bootstrapped Prediction Intervals for Models fit by mle2}
 \usage{
 ddabcd_post_fit_bootstrapped_prediction_intervals_mle2(
-  lst_fit,
+  obj_fit,
   int_samples = 1000,
   lgc_suppress_error = FALSE,
   chr_labels = c("a0", "lnk", "s", "lnd"),
@@ -15,7 +15,7 @@ ddabcd_post_fit_bootstrapped_prediction_intervals_mle2(
 )
 }
 \arguments{
-\item{lst_fit}{A model fit object that has methods
+\item{obj_fit}{A model fit object that has methods
 for \code{coef} and \code{vcov}.}
 
 \item{int_samples}{The numer of samples to draw

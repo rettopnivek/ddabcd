@@ -22,7 +22,7 @@ delay discounting model at each set of parameter values.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ddabcd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
       </span>
     </div>
 
@@ -52,7 +52,7 @@ delay discounting model at each set of parameter values.</p></li>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ddabcd_post_fit_bootstrapped_prediction_intervals_mle2</span><span class="op">(</span></span>
-<span>  <span class="va">lst_fit</span>,</span>
+<span>  <span class="va">obj_fit</span>,</span>
 <span>  int_samples <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  lgc_suppress_error <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  chr_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a0"</span>, <span class="st">"lnk"</span>, <span class="st">"s"</span>, <span class="st">"lnd"</span><span class="op">)</span>,</span>
@@ -64,7 +64,7 @@ delay discounting model at each set of parameter values.</p></li>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>lst_fit</dt>
+    <dl><dt>obj_fit</dt>
 <dd><p>A model fit object that has methods
 for <code>coef</code> and <code>vcov</code>.</p></dd>
 
@@ -118,9 +118,7 @@ upper bootstrapped prediction intervals for the N observations.</p>
 <span class="r-in"><span><span class="fu">ddabcd_post_fit_bootstrapped_prediction_intervals_mle2</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">lst_fits.mle2</span><span class="op">$</span><span class="va">R2006</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2.5%  0.7873843 0.7168757 0.6026481 0.5242532 0.4188485 0.3229774 0.2105051</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97.5% 0.9750150 0.9629716 0.9297762 0.9002964 0.8625759 0.8134035 0.7647308</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in fun_call(obj_fit, ...):</span> argument "fun_call" is missing, with no default</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

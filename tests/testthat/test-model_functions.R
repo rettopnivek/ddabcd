@@ -367,7 +367,7 @@ test_that("models fit successfully using nls", {
   expect_equal(
     ddabcd_fit_models_using_nls(
       dtf_delay[1:7, ]
-    ) |> sapply( function(l) !is.null(l) ) |> all(),
+    ) |> sapply( ddabcd_estimation_succeeded ) |> all(),
     TRUE
   )
 })
@@ -379,8 +379,18 @@ test_that("models fit successfully using mle2 (Normal)", {
     ddabcd_fit_models_using_mle2(
       dtf_delay[1:7, ],
       chr_distribution = 'Normal'
-    ) |> sapply( function(l) !is.null(l) ) |> all(),
+    ) |> sapply( ddabcd_estimation_succeeded ) |> all(),
     TRUE
+  )
+})
+
+test_that("models is robust to failed estimation", {
+  expect_equal(
+    ddabcd_fit_models_using_mle2(
+      (dtf_delay %index% 48) %index% list(1, 'eventname'),
+      chr_distribution = 'Logit-normal'
+    ) |> sapply( ddabcd_estimation_succeeded ),
+    c( Null = TRUE, M1987 = TRUE, R2006 = FALSE )
   )
 })
 

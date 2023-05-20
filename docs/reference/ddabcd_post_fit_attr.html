@@ -21,7 +21,7 @@ and ddabcd_fit_models_using_mle2."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ddabcd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
       </span>
     </div>
 
@@ -52,13 +52,13 @@ and <a href="ddabcd_fit_models_using_mle2.html">ddabcd_fit_models_using_mle2</a>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ddabcd_post_fit_attr</span><span class="op">(</span><span class="va">lst_fit</span>, chr_attr <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ddabcd_post_fit_attr</span><span class="op">(</span><span class="va">obj_fit</span>, chr_attr <span class="op">=</span> <span class="st">""</span>, obj_default <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>lst_fit</dt>
-<dd><p>A list with model fit results.</p></dd>
+    <dl><dt>obj_fit</dt>
+<dd><p>An R object for model fit results.</p></dd>
 
 
 <dt>chr_attr</dt>
@@ -68,6 +68,11 @@ specific attribute to access. Options include
 <code>'rmse'</code>, <code>'loglikelihood'</code>,
 <code>'AIC'</code>, <code>'BIC'</code>, <code>'nobs'</code>,
 or <code>'dof'</code>.</p></dd>
+
+
+<dt>obj_default</dt>
+<dd><p>Value to return if attributes
+aren't found.</p></dd>
 
 </dl></div>
     <div id="value">

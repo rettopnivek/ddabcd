@@ -14,11 +14,10 @@ ddabcd_post_fit_report(lst_all_fits)
 A message to the console.
 }
 \description{
-Function that provides a summary of (a) the
-number of participants for which models
-where successfully fit, and (b) means and
-inter-quartile limits for the root-mean-square-error
-(RMSE).
+Function that provides a summary of (a) the number of
+participants for which models where successfully fit,
+and (b) means and uncertainty intervals for the
+root-mean-square-error (RMSE).
 }
 \examples{
 # Example data

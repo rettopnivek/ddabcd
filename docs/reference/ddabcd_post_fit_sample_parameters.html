@@ -19,7 +19,7 @@ normal distribution."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ddabcd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@ normal distribution.</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ddabcd_post_fit_sample_parameters</span><span class="op">(</span></span>
-<span>  <span class="va">lst_fit</span>,</span>
+<span>  <span class="va">obj_fit</span>,</span>
 <span>  int_samples <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  lgc_suppress_error <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  chr_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a0"</span>, <span class="st">"lnk"</span>, <span class="st">"s"</span>, <span class="st">"lnd"</span><span class="op">)</span></span>
@@ -58,7 +58,7 @@ normal distribution.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>lst_fit</dt>
+    <dl><dt>obj_fit</dt>
 <dd><p>A model fit object that has methods
 for <code>coef</code> and <code>vcov</code>.</p></dd>
 
@@ -100,10 +100,7 @@ of <code>NA</code> values if samples cannot be drawn.</p></dd>
 <span class="r-in"><span><span class="fu">ddabcd_post_fit_sample_parameters</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">lst_fits.mle2</span><span class="op">$</span><span class="va">M1987</span>, int_samples <span class="op">=</span> <span class="fl">3</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            lnk       lnd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -1.777849 -1.642270</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -2.226957 -1.787143</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -2.169760 -1.591080</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in fun_call(obj_fit, ...):</span> argument "fun_call" is missing, with no default</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
