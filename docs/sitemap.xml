@@ -120,4 +120,10 @@
   <url>
     <loc>/reference/ddabcd_post_fit_convergence.html</loc>
   </url>
+  <url>
+    <loc>/reference/ddabcd_post_fit_prediction_intervals.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ddabcd_plot_multi_panel.html</loc>
+  </url>
 </urlset>

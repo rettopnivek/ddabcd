@@ -15,7 +15,7 @@ ddabcd_post_fit_sample_parameters(
 \item{obj_fit}{A model fit object that has methods
 for \code{coef} and \code{vcov}.}
 
-\item{int_samples}{The numer of samples to draw
+\item{int_samples}{The number of samples to draw
 from the multivariate normal distribution.}
 
 \item{lgc_suppress_error}{Logical; if \code{TRUE}

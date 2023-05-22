@@ -44,6 +44,8 @@ Either a numeric vector of censored value,
 or if \code{lgc_indicator} is \code{TRUE}, an
 integer vector with values of -1 for left-censored
 data, 1 for right-censored data, and 0 otherwise.
+If \code{obj_data} is \code{NULL}, returns the
+default limits used in the ABCD study.
 }
 \description{
 Function to left and right-censor numeric

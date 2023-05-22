@@ -18,7 +18,7 @@ data per participant."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ddabcd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.4</span>
       </span>
     </div>
 
@@ -70,6 +70,11 @@ discounting models to the data (see
 <a href="ddabcd_fit_models_using_nls.html">ddabcd_fit_models_using_nls</a> for an example).</p></dd>
 
 
+<dt>chr_participant</dt>
+<dd><p>A character string, the column name
+for each participant's identifier.</p></dd>
+
+
 <dt>lgc_progress</dt>
 <dd><p>Logical; if <code>TRUE</code> displays a
 progress bar for the function run time.</p></dd>
@@ -78,11 +83,6 @@ progress bar for the function run time.</p></dd>
 <dt>...</dt>
 <dd><p>Additional parameters for the
 <code>fun_to_fit_models</code> function.</p></dd>
-
-
-<dt>chr_participants</dt>
-<dd><p>A character string, the column name
-for each participant's identifier.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -97,15 +97,11 @@ participant.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example data set</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ddabcd_data_example_long</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">dtf_delay</span> <span class="op">&lt;-</span> <span class="va">ddabcd_data_example_long</span><span class="op">[</span></span></span>
-<span class="r-in"><span>  <span class="va">ddabcd_data_example_long</span><span class="op">$</span><span class="va">eventname</span> <span class="op">==</span> <span class="st">"1_year_follow_up_y_arm_1"</span>,</span></span>
-<span class="r-in"><span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">dtf_delay</span> <span class="op">&lt;-</span> <span class="va">ddabcd_data_example_long</span> <span class="op"><a href="grapes-index-grapes.html">%index%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">'eventname'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit models using nls</span></span></span>
 <span class="r-in"><span><span class="va">lst_all_fits.nls</span> <span class="op">&lt;-</span> <span class="fu">ddabcd_fit_models_across_participants</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">dtf_delay</span>,</span></span>
-<span class="r-in"><span>  <span class="va">ddabcd_fit_models_using_nls</span>,</span></span>
-<span class="r-in"><span>  lgc_progress <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>  <span class="va">dtf_delay</span>, <span class="va">ddabcd_fit_models_using_nls</span>, lgc_progress <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

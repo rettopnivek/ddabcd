@@ -3,7 +3,7 @@
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2023-05-20
+# Last updated 2023-05-22
 
 # Table of contents
 # 1) Probability distribution functions
@@ -40,7 +40,7 @@
 #     5.2.1) ddabcd_post_fit_compute_rmse
 #     5.2.2) ddabcd_post_fit_report
 #     5.2.3) ddabcd_post_fit_sample_parameters
-#   5.?) ddabcd_post_fit_bootstrapped_prediction_interval_mle2
+#     5.2.4) ddabcd_post_fit_prediction_intervals
 #   5.3) Tools for extracting/incorporating results
 #     5.3.1) ddabcd_post_fit_extract
 #     5.3.2) ddabcd_post_fit_attr
@@ -1433,7 +1433,8 @@ ddabcd_fit_models_using_nls <- function(
         AIC = AIC( lst_fits.nls[[m]] ),
         BIC = BIC( lst_fits.nls[[m]] ),
         nobs = nrow( dtf_data ),
-        dof = attributes( logLik( lst_fits.nls[[m]] ) )$df
+        dof = attributes( logLik( lst_fits.nls[[m]] ) )$df,
+        distribution = 'normal'
       )
       attributes( lst_fits.nls[[m]] ) <- lst_attr
 
@@ -1772,7 +1773,8 @@ ddabcd_fit_models_using_mle2 <- function(
         AIC = AIC( lst_fits.mle2[[m]] ),
         BIC = BIC( lst_fits.mle2[[m]] ),
         nobs = nrow( dtf_data ),
-        dof = attributes( logLik( lst_fits.mle2[[m]] ) )$df
+        dof = attributes( logLik( lst_fits.mle2[[m]] ) )$df,
+        distribution = chr_distribution
       )
       attributes( lst_fits.mle2[[m]] ) <- lst_attr
 
@@ -2094,7 +2096,8 @@ ddabcd_fit_models_using_tl_mle2 <- function(
         AIC = AIC( lst_fits.mle2[[m]] ),
         BIC = BIC( lst_fits.mle2[[m]] ),
         nobs = nrow( dtf_data ),
-        dof = attributes( logLik( lst_fits.mle2[[m]] ) )$df
+        dof = attributes( logLik( lst_fits.mle2[[m]] ) )$df,
+        distribution = 'normal'
       )
       attributes( lst_fits.mle2[[m]] ) <- lst_attr
 
@@ -2121,7 +2124,7 @@ ddabcd_fit_models_using_tl_mle2 <- function(
 #' @param fun_to_fit_models A function to fit the delay
 #'   discounting models to the data (see
 #'   [ddabcd::ddabcd_fit_models_using_nls] for an example).
-#' @param chr_participants A character string, the column name
+#' @param chr_participant A character string, the column name
 #'   for each participant's identifier.
 #' @param lgc_progress Logical; if \code{TRUE} displays a
 #'   progress bar for the function run time.
@@ -2134,15 +2137,11 @@ ddabcd_fit_models_using_tl_mle2 <- function(
 #' @examples
 #' # Example data set
 #' data(ddabcd_data_example_long)
-#' dtf_delay <- ddabcd_data_example_long[
-#'   ddabcd_data_example_long$eventname == "1_year_follow_up_y_arm_1",
-#' ]
+#' dtf_delay <- ddabcd_data_example_long %index% list(1, 'eventname')
 #'
 #' # Fit models using nls
 #' lst_all_fits.nls <- ddabcd_fit_models_across_participants(
-#'   dtf_delay,
-#'   ddabcd_fit_models_using_nls,
-#'   lgc_progress = FALSE
+#'   dtf_delay, ddabcd_fit_models_using_nls, lgc_progress = FALSE
 #' )
 #'
 #' @export
@@ -2723,7 +2722,7 @@ ddabcd_post_fit_report <- function(
 #'
 #' @param obj_fit A model fit object that has methods
 #'   for \code{coef} and \code{vcov}.
-#' @param int_samples The numer of samples to draw
+#' @param int_samples The number of samples to draw
 #'   from the multivariate normal distribution.
 #' @param lgc_suppress_error Logical; if \code{TRUE}
 #'   suppress error messages and return a matrix
@@ -2756,7 +2755,7 @@ ddabcd_post_fit_sample_parameters <- function(
     chr_labels = c( 'a0', 'lnk', 's', 'lnd' ) ) {
 
   # If successful fit
-  if ( ddabcd_post_fit_if_success( obj_fit ) ) {
+  if ( ddabcd::ddabcd_estimation_succeeded( obj_fit ) ) {
 
     num_coef <- coef( obj_fit )
     mat_VC <- vcov( obj_fit )
@@ -2767,6 +2766,31 @@ ddabcd_post_fit_sample_parameters <- function(
       Sigma = mat_VC
     )
     colnames( mat_samples ) <- names( num_coef )
+
+    # Add residual variance for non-linear least-squares fit
+    if ( class( obj_fit ) == 'nls' ) {
+
+      # Degrees of freedom
+      int_dof <-
+        ddabcd::ddabcd_post_fit_attr( obj_fit, 'dof' )
+
+      # Residual variance
+      num_resid_var <- sigma(obj_fit)^2
+
+      # Residual variance follows chi-square distribution
+      num_chisq <-
+        rchisq(int_samples, df = int_dof )
+
+      num_resid_sd_samples <- sqrt(
+        (num_resid_var * int_dof) / num_chisq
+      )
+
+      mat_samples <- cbind(
+        mat_samples, lnd = log( num_resid_sd_samples )
+      )
+
+      # Close 'Add residual variance for non-linear least-squares fit'
+    }
 
     # Close 'If successful fit'
   } else {
@@ -2793,104 +2817,207 @@ ddabcd_post_fit_sample_parameters <- function(
   return( mat_samples )
 }
 
-#### 5.2.4) ddabcd_post_fit_bootstrapped_prediction_interval_mle2 ####
-#' Bootstrapped Prediction Intervals for Models fit by mle2
+#### 5.2.4) ddabcd_post_fit_prediction_intervals ####
+#' Compute Prediction Intervals
 #'
-#' Compute bootstrapped prediction intervals via simulating
-#' 1) possible parameter values from a multivariate normal
-#' distribution, and 2) possible observed data values for
-#' delay discounting model at each set of parameter values.
+#' Compute prediction intervals for delayed discounting
+#' model fit. Users can either compute the interval
+#' using model parameter point estimates, or incorporate
+#' uncertainty in parameter estimates in the prediction
+#' interval via a parametric bootstrap approach.
 #'
-#' @param obj_fit A model fit object that has methods
-#'   for \code{coef} and \code{vcov}.
-#' @param int_samples The numer of samples to draw
-#'   from the multivariate normal distribution.
+#' @param obj_fit An R object for model fit results.
+#' @param num_width A numeric value between 0 and 1
+#'   specifying the width of the prediction interval.
+#' @param lgc_bootstrap Logical; if \code{TRUE}
+#'   computes prediction intervals via a parametric
+#'   bootstrap approach that incorporates uncertainty
+#'   in model parameters.
+#' @param int_samples An integer value, the number of
+#'   samples to use for the parameter bootstrap
+#'   (higher values lead to less Monte Carlo error of
+#'   approximation but longer computation times).
+#' @param num_limits An optional numeric vector giving
+#'   the lower and upper limits below and above which
+#'   simulated predictions should be censored.
 #' @param lgc_suppress_error Logical; if \code{TRUE}
-#'   suppress error messages and return a matrix
-#'   of \code{NA} values instead.
-#' @param chr_labels The column names for the matrix
-#'   of \code{NA} values if samples cannot be drawn.
-#' @param num_width A numeric value between 0 and 1, the
-#'   width of the prediction interval.
-#' @param num_limits An optional vector giving the lower
-#'   and upper limits below and above which data should
-#'   be censored.
+#'   function does not produce an error when the
+#'   parameter bootstrap cannot be computed.
+#' @param ... Additional parameters for the
+#'   [ddabcd::ddabcd_model_predictions] function.
 #'
-#' @return A 2 x N matrix whose rows give the lower and
-#' upper bootstrapped prediction intervals for the N observations.
+#' @return A 2xN matrix whose rows give the lower
+#'   and upper prediction limits for the N data points,
+#'   respectively.
 #'
 #' @examples
 #' # Example data
-#' data( ddabcd_data_example_long )
+#' data("ddabcd_data_example_long")
 #' dtf_long <- ddabcd_data_example_long %index% 1
 #' dtf_long <- dtf_long %index% list( 1, 'eventname' )
 #'
+#' lst_fits.nls <- ddabcd_fit_models_using_nls( dtf_long )
 #' lst_fits.mle2 <- ddabcd_fit_models_using_mle2(
 #'   dtf_long, chr_distribution = 'Logit-normal'
 #' )
 #'
-#' ddabcd_post_fit_bootstrapped_prediction_intervals_mle2(
-#'   lst_fits.mle2$R2006
-#' )
+#' # Prediction intervals using point estimates
+#' ddabcd_post_fit_prediction_intervals( lst_fits.nls$M1987 ) |> round(2)
+#' ddabcd_post_fit_prediction_intervals( lst_fits.mle2$M1987 ) |> round(2)
+#'
+#' # Bootstrapped prediction intervals
+#' ddabcd_post_fit_prediction_intervals(
+#'   lst_fits.mle2$M1987,
+#'   lgc_bootstrap = TRUE
+#' ) |> round(2)
 #'
 #' @export
 
-ddabcd_post_fit_bootstrapped_prediction_intervals_mle2 <- function(
+ddabcd_post_fit_prediction_intervals <- function(
     obj_fit,
-    int_samples = 1000,
-    lgc_suppress_error = FALSE,
-    chr_labels = c( 'a0', 'lnk', 's', 'lnd' ),
     num_width = .95,
+    lgc_bootstrap = FALSE,
+    int_samples = 1000,
     num_limits = NULL,
+    lgc_suppress_error = FALSE,
     ... ) {
 
-  mat_param_samples <- ddabcd::ddabcd_post_fit_sample_parameters(
-    obj_fit,
-    int_samples = int_samples,
-    lgc_suppress_error = lgc_suppress_error
-  )
-
-  chr_distribution <- attributes( obj_fit )$data$chr_distribution
-  num_delay <- attributes( obj_fit )$data$dtf_data[[
-    attributes( obj_fit )$data$chr_measures[2]
-  ]]
-
-  mat_simulated <- apply(
-    mat_param_samples, 1, function(num_param) {
-      ddabcd_model_predictions(
-        num_param = num_param,
-        num_delay = num_delay,
-        chr_distribution = chr_distribution,
-        ...
-      )
-    }
-  )
-
+  # Lower and upper limits for prediction interval
   num_intervals <-
-    .5 + num_width*c( -.5, .5)
+    .5 + c(-.5, .5)*num_width
 
-  # If simulated data should be censored
-  if ( !is.null( num_limits ) ) {
+  # Initialize output
+  mat_prediction_intervals <- NULL
 
-    # Loop over columns
-    for ( k in 1:ncol( mat_simulated ) ) {
+  # If estimation succeeded
+  if ( ddabcd::ddabcd_estimation_succeeded(obj_fit) ) {
 
-      mat_simulated[, k] <- ddabcd_data_censor(
-        mat_simulated[, k], chr_outcome = '',
-        num_limits = num_limits,
-        num_scaling = 1
+    # Prediction intervals based on point estimates
+    if ( !lgc_bootstrap ) {
+
+      # If fit with non-linear least-squares
+      if ( class( obj_fit ) %in% 'nls' ) {
+
+        num_disp <- log( sigma( obj_fit ) )
+
+        # Close 'If fit with non-linear least-squares'
+      }
+
+      # If fit with maximum likelihood
+      if ( class( obj_fit ) %in% 'mle2' ) {
+
+        num_disp <- obj_fit %pull_coef% 'lnd'
+
+        # Close 'If fit with maximum likelihood'
+      }
+
+      # Extract distribution for data
+      chr_distribution <- ddabcd::ddabcd_post_fit_attr(
+        obj_fit,
+        'distribution'
+      )
+      lgc_distribution <- ddabcd::ddabcd_model_distributions(
+        chr_distribution
       )
 
-      # Close 'Loop over columns'
+      # Extract model predictions
+      num_predicted <- ddabcd::ddabcd_post_fit_attr(
+        obj_fit,
+        'predicted'
+      )
+
+      # Normal distribution
+      if ( lgc_distribution['Normal'] ) {
+
+        mat_prediction_intervals <- sapply(
+          num_predicted, function(num_mu) {
+            qnorm( num_intervals, num_mu, exp( num_disp ) )
+          }
+        )
+
+        # Close 'Normal distribution'
+      }
+
+      # Beta distribution
+      if ( lgc_distribution['Beta'] ) {
+
+        mat_prediction_intervals <- sapply(
+          num_predicted, function(num_mu) {
+            ddabcd::qbetamp( num_intervals, num_mu, exp( num_disp ) )
+          }
+        )
+
+        # Close 'Beta distribution'
+      }
+
+      # Logit-normal distribution
+      if ( lgc_distribution['Logitnormal'] ) {
+
+        mat_prediction_intervals <- sapply(
+          num_predicted, function(num_mu) {
+            ddabcd::qlogitnorm( num_intervals, num_mu, exp( num_disp ) )
+          }
+        )
+
+        # Close 'Logit-normal distribution'
+      }
+
+      # Close 'Prediction intervals based on point estimates'
+    } else {
+
+      mat_param_samples <- ddabcd::ddabcd_post_fit_sample_parameters(
+        obj_fit,
+        int_samples = int_samples,
+        lgc_suppress_error = lgc_suppress_error,
+        chr_labels = chr_labels
+      )
+
+      chr_distribution <- ddabcd::ddabcd_post_fit_attr(
+        obj_fit, 'distribution'
+      )
+      num_delay <- ddabcd::ddabcd_post_fit_attr(
+        obj_fit, 'delay'
+      )
+
+      mat_simulated <- apply(
+        mat_param_samples, 1, function(num_param) {
+          ddabcd::ddabcd_model_predictions(
+            num_param = num_param,
+            num_delay = num_delay,
+            chr_distribution = chr_distribution,
+            ...
+          )
+        }
+      )
+
+      # If simulated data should be censored
+      if ( !is.null( num_limits ) ) {
+
+        # Loop over columns
+        for ( k in 1:ncol( mat_simulated ) ) {
+
+          mat_simulated[, k] <- ddabcd::ddabcd_data_censor(
+            mat_simulated[, k], chr_outcome = '',
+            num_limits = num_limits,
+            num_scaling = 1
+          )
+
+          # Close 'Loop over columns'
+        }
+
+        # Close 'If simulated data should be censored'
+      }
+
+      mat_prediction_intervals <-
+        apply( mat_simulated, 1, quantile, prob = num_intervals )
+
+      # Close else for 'Prediction intervals based on point estimates'
     }
 
-    # Close 'If simulated data should be censored'
+    # Close 'If estimation succeeded'
   }
 
-  mat_predicted <-
-    apply( mat_simulated, 1, quantile, prob = num_intervals )
-
-  return( mat_predicted )
+  return( mat_prediction_intervals )
 }
 
 #### 5.3) Tools for extracting/incorporating results ####

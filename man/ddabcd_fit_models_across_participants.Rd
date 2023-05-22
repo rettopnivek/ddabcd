@@ -22,14 +22,14 @@ log of the delay durations.}
 discounting models to the data (see
 \link{ddabcd_fit_models_using_nls} for an example).}
 
+\item{chr_participant}{A character string, the column name
+for each participant's identifier.}
+
 \item{lgc_progress}{Logical; if \code{TRUE} displays a
 progress bar for the function run time.}
 
 \item{...}{Additional parameters for the
 \code{fun_to_fit_models} function.}
-
-\item{chr_participants}{A character string, the column name
-for each participant's identifier.}
 }
 \value{
 A list of lists, the model fit results for each
@@ -42,15 +42,11 @@ data per participant.
 \examples{
 # Example data set
 data(ddabcd_data_example_long)
-dtf_delay <- ddabcd_data_example_long[
-  ddabcd_data_example_long$eventname == "1_year_follow_up_y_arm_1",
-]
+dtf_delay <- ddabcd_data_example_long \%index\% list(1, 'eventname')
 
 # Fit models using nls
 lst_all_fits.nls <- ddabcd_fit_models_across_participants(
-  dtf_delay,
-  ddabcd_fit_models_using_nls,
-  lgc_progress = FALSE
+  dtf_delay, ddabcd_fit_models_using_nls, lgc_progress = FALSE
 )
 
 }

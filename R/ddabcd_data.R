@@ -3,7 +3,7 @@
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2023-05-19
+# Last updated 2023-05-22
 
 # Table of contents
 # 1) ddabcd_data_example_wide
@@ -582,6 +582,8 @@ ddabcd_data_prep <- function(
 #' or if \code{lgc_indicator} is \code{TRUE}, an
 #' integer vector with values of -1 for left-censored
 #' data, 1 for right-censored data, and 0 otherwise.
+#' If \code{obj_data} is \code{NULL}, returns the
+#' default limits used in the ABCD study.
 #'
 #' @examples
 #' # Example data set
@@ -607,6 +609,14 @@ ddabcd_data_censor <- function(
     num_limits = c(0.78125, 99.21875),
     num_scaling = 100) {
 
+  # If no data provided return default limits
+  if ( is.null( obj_data ) ) {
+
+    return( num_limits/num_scaling )
+
+    # Close 'If no data provided return default limits'
+  }
+
   # If no column name provided
   if ( chr_outcome == '' ) {
 
@@ -625,10 +635,10 @@ ddabcd_data_censor <- function(
 
   lgc_under <-
     !is.na( num_values ) &
-    ( num_values * num_scaling ) < num_limits[1]
+    ( num_values * num_scaling ) <= num_limits[1]
   lgc_over <-
     !is.na( num_values ) &
-    ( num_values * num_scaling ) > num_limits[2]
+    ( num_values * num_scaling ) >= num_limits[2]
   lgc_in_range <-
     !is.na( num_values ) &
     !lgc_under & !lgc_over

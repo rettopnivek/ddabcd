@@ -20,7 +20,7 @@ panel figure."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ddabcd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.4</span>
       </span>
     </div>
 
@@ -66,10 +66,10 @@ panel figure.</p>
 <span>  num_jitter <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  chr_model <span class="op">=</span> <span class="st">"M1987"</span>,</span>
 <span>  num_margin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">2</span>, <span class="fl">0.5</span><span class="op">)</span>,</span>
-<span>  lst_predicted <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ddabcd_indifference_score_1.hat"</span>,</span>
-<span>    <span class="st">"ddabcd_indifference_score_1.hat.lb"</span>, <span class="st">"ddabcd_indifference_score_1.hat.ub"</span><span class="op">)</span>,</span>
+<span>  lst_predicted <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lgc_add <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lgc_new <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  lst_prediction_settings <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -174,6 +174,17 @@ to an existing figure.</p></dd>
 new plotting window.</p></dd>
 
 
+<dt>lst_prediction_settings</dt>
+<dd><p>An optional named list
+specifying how prediction intervals should be calculated
+if a model fit object is provided. The list should contain
+<code>lst_prediction_settings$width</code> for the width of the
+prediction interval, <code>lst_prediction_settings$bootstrap</code>
+set to <code>TRUE</code> for using a parametric bootstrap and
+<code>FALSE</code> otherwise, and <code>lst_prediction_settings$samples</code>
+with the number of samples to draw for the parametric bootstrap.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters to the <a href="https://rdrr.io/r/base/plot.html" class="external-link">base::plot</a>
 function.</p></dd>
@@ -188,7 +199,8 @@ function.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load in example data sets</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Load in example data sets</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span> <span class="va">ddabcd_data_example_wide</span> <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span> <span class="va">ddabcd_data_example_long</span> <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dtf_wide</span> <span class="op">&lt;-</span> <span class="va">ddabcd_data_example_wide</span> <span class="op"><a href="grapes-index-grapes.html">%index%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span> <span class="fl">1</span>, <span class="st">'eventname'</span> <span class="op">)</span></span></span>
@@ -196,7 +208,6 @@ function.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># By default data assumed to be long-form</span></span></span>
 <span class="r-in"><span><span class="fu">ddabcd_plot_single_panel</span><span class="op">(</span> <span class="va">dtf_long</span> <span class="op"><a href="grapes-index-grapes.html">%index%</a></span> <span class="fl">1</span> <span class="op">)</span> <span class="co"># 1st participant</span></span></span>
-<span class="r-plt img"><img src="ddabcd_plot_single_panel-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># Wide-form data can be plotted by providing vector of column names</span></span></span>
 <span class="r-in"><span><span class="fu">ddabcd_plot_single_panel</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">dtf_wide</span> <span class="op"><a href="grapes-index-grapes.html">%index%</a></span> <span class="fl">1</span>, <span class="co"># 1st participant</span></span></span>
@@ -204,18 +215,16 @@ function.</p></dd>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span> <span class="va">dtf_wide</span> <span class="op"><a href="grapes-col-grapes.html">%col%</a></span> <span class="st">'indif'</span> <span class="op">)</span>,</span></span>
 <span class="r-in"><span>  num_ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fl">0</span>, <span class="fl">100</span> <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="ddabcd_plot_single_panel-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example using model fits for first participant</span></span></span>
 <span class="r-in"><span><span class="va">lst_fits.nls</span> <span class="op">&lt;-</span> <span class="fu"><a href="ddabcd_fit_models_using_nls.html">ddabcd_fit_models_using_nls</a></span><span class="op">(</span> <span class="va">dtf_long</span> <span class="op"><a href="grapes-index-grapes.html">%index%</a></span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ddabcd_plot_single_panel</span><span class="op">(</span> <span class="va">lst_fits.nls</span>, chr_model <span class="op">=</span> <span class="st">'M1987'</span> <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ddabcd_post_fit_attr(lst_fits.nls[[chr_model]], "delay"):</span> object 'lst_fits.nls' not found</span>
 <span class="r-in"><span><span class="co"># Add predictions for Rachlin's (2006) model</span></span></span>
 <span class="r-in"><span><span class="fu">ddabcd_plot_single_panel</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">lst_fits.nls</span>, chr_model <span class="op">=</span> <span class="st">'R2006'</span>,</span></span>
 <span class="r-in"><span>  chr_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'black'</span>, <span class="st">'black'</span>, <span class="st">'red'</span> <span class="op">)</span>, lgc_add <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ddabcd_post_fit_attr(lst_fits.nls[[chr_model]], "delay"):</span> object 'lst_fits.nls' not found</span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

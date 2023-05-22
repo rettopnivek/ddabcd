@@ -20,10 +20,10 @@ ddabcd_plot_single_panel(
   num_jitter = 0,
   chr_model = "M1987",
   num_margin = c(4, 4, 2, 0.5),
-  lst_predicted = list("ddabcd_indifference_score_1.hat",
-    "ddabcd_indifference_score_1.hat.lb", "ddabcd_indifference_score_1.hat.ub"),
+  lst_predicted = NULL,
   lgc_add = FALSE,
   lgc_new = FALSE,
+  lst_prediction_settings = NULL,
   ...
 )
 }
@@ -90,6 +90,15 @@ to an existing figure.}
 \item{lgc_new}{Logical; if \code{TRUE} generates a
 new plotting window.}
 
+\item{lst_prediction_settings}{An optional named list
+specifying how prediction intervals should be calculated
+if a model fit object is provided. The list should contain
+\code{lst_prediction_settings$width} for the width of the
+prediction interval, \code{lst_prediction_settings$bootstrap}
+set to \code{TRUE} for using a parametric bootstrap and
+\code{FALSE} otherwise, and \code{lst_prediction_settings$samples}
+with the number of samples to draw for the parametric bootstrap.}
+
 \item{...}{Additional parameters to the \link[base:plot]{base::plot}
 function.}
 }
@@ -103,6 +112,7 @@ indifference scores as proportions) as a single
 panel figure.
 }
 \examples{
+\dontrun{
 # Load in example data sets
 data( ddabcd_data_example_wide )
 data( ddabcd_data_example_long )
@@ -127,5 +137,6 @@ ddabcd_plot_single_panel(
   lst_fits.nls, chr_model = 'R2006',
   chr_color = c('black', 'black', 'red' ), lgc_add = TRUE
 )
+}
 
 }
