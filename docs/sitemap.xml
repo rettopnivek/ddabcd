@@ -1,129 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/authors.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/index.html</loc>
   </url>
   <url>
-    <loc>/404.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/404.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd-package.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd-package.html</loc>
   </url>
   <url>
-    <loc>/reference/dbetamp.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/dbetamp.html</loc>
   </url>
   <url>
-    <loc>/reference/dlogitnorm.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/dlogitnorm.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_estimation_sum_of_log_likelihoods.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_estimation_sum_of_log_likelihoods.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_fit_models_using_nls.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_fit_models_using_nls.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_fit_models_across_participants.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_fit_models_across_participants.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_model_distributions.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_model_distributions.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_model_predictions.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_model_predictions.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_estimation_priors.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_estimation_priors.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_extract.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_extract.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_sample_parameters.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_sample_parameters.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_fit_models_using_mle2.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_fit_models_using_mle2.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_data_example_wide.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_data_example_wide.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_data_prep.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_data_prep.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_data_example_long.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_data_example_long.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_data_censor.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_data_censor.html</loc>
   </url>
   <url>
-    <loc>/reference/grapes-pull_coef-grapes.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/grapes-pull_coef-grapes.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_add_to_data.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_add_to_data.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_data_merge_by_id_and_time_point.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_data_merge_by_id_and_time_point.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_compute_rmse.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_compute_rmse.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_report.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_report.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_attr.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_attr.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_ifelse_null.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_ifelse_null.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_estimation_sum_of_log_tobit_likelihoods.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_estimation_sum_of_log_tobit_likelihoods.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_fit_models_using_tl_mle2.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_fit_models_using_tl_mle2.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_data_default_col.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_data_default_col.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_data_delay_durations.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_data_delay_durations.html</loc>
   </url>
   <url>
-    <loc>/reference/grapes-index-grapes.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/grapes-index-grapes.html</loc>
   </url>
   <url>
-    <loc>/reference/grapes-col-grapes.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/grapes-col-grapes.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_plot_single_panel.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_plot_single_panel.html</loc>
   </url>
   <url>
-    <loc>/reference/grapes-transform-grapes.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/grapes-transform-grapes.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_bootstrapped_prediction_intervals_mle2.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_bootstrapped_prediction_intervals_mle2.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_estimation_succeeded.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_estimation_succeeded.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_if_success.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_if_success.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_convergence.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_convergence.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_post_fit_prediction_intervals.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_post_fit_prediction_intervals.html</loc>
   </url>
   <url>
-    <loc>/reference/ddabcd_plot_multi_panel.html</loc>
+    <loc>https://rettopnivek.github.io/ddabcd/reference/ddabcd_plot_multi_panel.html</loc>
   </url>
 </urlset>
